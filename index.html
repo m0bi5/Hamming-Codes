@@ -1,0 +1,163 @@
+<html>
+	<head>
+		<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i" rel="stylesheet"> 
+		<link href="stylesheet/main.css" rel="stylesheet" type="text/css"> 
+		<script type="text/javascript" src="script/functions.js"></script>
+	</head>
+	<body>
+		<h1> 
+			<center>
+				Hamming Codes 
+			</center>
+		</h1>
+		<div id="main">
+
+			<div id="top">
+
+				<div id="introinput">
+					<div class="ibox">
+						<center>
+							<h2>
+								Enter Dataword
+							</h2>	
+							<input id="message" type="text" placeholder="Input binary number"/>
+							<br/>
+							<button id="encode" onclick="encode(document.getElementById('message').value,0);">
+								Encode Data
+							</button>
+							<div id="intro">
+								<h2>
+									About
+								</h2>
+								<p style="font-size: 20px">
+									Hamming codes are part of linear error correcting codes and can detect up to two bit errors and correct up to one bit error. They are a class of binary linear codes. The parity bits are always positioned at the bit positions of powers of 2 (such as p1,p2,p4,p8).  The data is put in between the parity bits
+								</p>
+								<p>
+									<br/>								
+								</p>
+							</div>
+						</center>
+					</div>
+				</div>
+				<div id="result">
+					<div class="box">
+						<center>
+							<h2>
+								Codeword formed
+							</h2>
+							<span style="word-wrap: break-word;" id="encoded"></span>
+							<br/>
+							<br/>
+							<button id="learn" onclick="learnEncode(document.getElementById('encoded'));">
+								Learn More
+							</button>
+							<button id="transmit" onclick="transmit();">
+								Transmit Data
+							</button>
+						</center>
+					</div>
+				</div>
+
+			</div>
+
+
+			<div id="bottom">
+				<center>
+					<div id="received">
+						<div class="box">
+							<center>
+								<h2>
+									Received Codeword
+								</h2>
+								<span style="word-wrap: break-word;" id="receive"></span>
+								<br/>							
+								<span id="error"></span>
+								<br/>
+								<span style="word-wrap: break-word;" id="originaldata"></span>
+								<br/>
+								<button id="learn" onclick="learnError();">
+									Learn More
+								</button>
+								<button id="correct" onclick="decode();">
+									Detect Error
+								</button>
+								<button id="correct" onclick="correct();">
+									Correct Error
+								</button>						
+								<button id="correct" onclick="extract();">
+									Extract Data
+								</button>
+							</center>
+						</div>
+					</div>
+				</center>
+			</div>
+		</div>
+		<div id="about">
+			<div class="box">
+				<center>
+					<h2>
+						More about Encoding
+					</h2>
+					<span style="font-weight: 500" id="dataword">Dataword entered : </span>	
+					<br>
+					<span style="font-weight: 500" id="dc">Dataword + Parity bits : </span>	
+					<br>
+					<span style="font-weight: 500" id="codeword">Codeword : </span>	
+					<br>
+				</center>
+				<center>
+					<h2 style="border-top: solid 1px white;width: 70%;">
+						Parity Calculation
+					</h2>
+					<span style="margin-top:-30px; font-weight: 500">
+						Parity bits are calculated for Dataword + Parity bits
+					</span>
+				</center>
+				<p id="info" class='ole' style="font-size:20px;background:#16a085;margin-left: 30px;margin-right: 30px;height: 20%; padding-left: 5%;padding-right: 5%;">
+				</p>
+				<span style="font-size:20px;margin-left: 30px;margin-right: 30px;margin-bottom:-2%;font-weight: 500;">
+					The calculated parity bits are then combined with the dataword to form the codeword
+				</span>
+				<br/>
+				<center>
+					<button id="closebtn" onclick='document.getElementById("about").setAttribute("style","margin-top:10%;width:70%;margin-left:15%;");document.getElementById("main").setAttribute("style","margin-top:1%;transition:margin-top 2s ease;")'>
+						Close
+					</button>
+				</center>
+			</div>
+		</div>
+		<div id="about2">
+			<div class="box">
+				<center>
+					<h2>
+						More about Error Correction
+					</h2>
+					<span style="font-weight: 500" id="codeword2">Transmitted Codeword : </span>	
+					<br>
+					<span style="font-weight: 500" id="rec">Received Codeword : </span>	
+					<br>
+				</center>
+				<center>
+					<h2 style="border-top: solid 1px white;width: 70%;">
+						Error Position Calculation
+					</h2>
+					<span style="margin-top:-30px; font-weight: 500">
+						Parity bits are calculated for the Received Codeword
+					</span>
+				</center>
+				<br/>				
+				<p id="info2" class='ole' style="font-size:20px;background:#16a085;margin-left: 30px;margin-right: 30px;height: 20%; padding-left: 5%;padding-right: 5%;">
+				</p>
+				<p style="font-size:20px;margin-left: 30px;margin-right: 30px;margin-bottom:-2%;">
+					After the error position is detected, the bit at that position is inverted to correct the error. The dataword can then be extracted by ignoring the bits at the parity positions.
+				</p>
+				<center>
+					<button id="closebtn" onclick='document.getElementById("about2").setAttribute("style","margin-top:10%;width:70%;margin-left:15%;");document.getElementById("main").setAttribute("style","margin-top:1%;transition:margin-top 2s ease;")'>
+						Close
+					</button>
+				</center>
+			</div>
+		</div>
+	</body>
+</html>
