@@ -1,0 +1,855 @@
+<html>
+	<head>
+		<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i" rel="stylesheet"> 
+		<script type="text/javascript" src="functions.js"></script>
+		<link rel="stylesheet" type="text/css" href="styles.css">
+    <script type="text/javascript">
+    
+var correc=0,no_errors=0;
+function msgIsValid(msg)
+{
+	var i=""
+	var found=0
+	for (i in msg)
+	{
+		if (msg[i]!=='0' && msg[i]!=='1')
+		{
+			return false
+		}
+	}
+	return true
+}
+function mismatch(a,b)
+{
+	var c=0
+	for(i in a)
+	{
+		if(a[i]!=b[i])
+			c+=1
+	}
+	return c
+}
+function power_2(num)
+{
+	if(num===0)
+		return true
+	return ((num & (num - 1)) == 0)
+}
+function gencode(message,parity)
+{
+	var codeword=[]
+	var i=0
+	var j=0
+	var message=message.split('')	
+	var n=message.length
+	var k=parity.length
+	var m=0
+	for(i=1;i<n+k+1;i+=1)
+	{
+		if(power_2(i)===true)
+		{
+			codeword.push(parity[j].toString())
+			j+=1
+		}
+		else
+		{	
+			codeword.push(message[m].toString())
+			m+=1
+		}
+	}
+	return codeword
+}
+function encode(message)
+{
+	document.getElementById("introinput").setAttribute("style","width:29%;")
+	document.getElementsByClassName("ibox")[0].setAttribute("style","transition:height 2s ease;height:81%;")
+	document.getElementById("top").setAttribute("style","transition:margin-left 2s ease;margin-left:-10%;")
+	document.getElementById("intro").setAttribute("style","display:none;")
+
+	document.getElementById("received").setAttribute("style","transition:margin-top 2s ease;margin-top:0%;animation:2s fadeIn;animation-fill-mode:forwards;")
+	document.getElementById("result").setAttribute("style","animation:2s fadeIn;animation-fill-mode: forwards;margin-right:15%;")
+	var n=message.length
+	if(msgIsValid(message)===false)
+	{
+		alert('Input should be in binary')
+		return 0
+	}
+	var messageLength=message.length
+	for(var k=0;Math.pow(2,k)-1-k<messageLength;k+=1);
+	var parityLength=k
+	var parity=[]
+	for(var i=0;i<parityLength;i+=1)
+		parity[i]=0
+	var codeword=[]
+	var codeLength=n+k
+	codeword=gencode(message,parity)
+	for(var j=0;j<parityLength;j+=1)
+	{
+		var count=0
+		var increment=Math.pow(2,j)
+		codeword=gencode(message,parity)
+		for(var x=Math.pow(2,j)-1;x<messageLength+parityLength;x+=2*increment)
+		{
+			for(var y=0;y<increment;y+=1)
+			{
+				if(x+y<messageLength+parityLength)
+				{
+					if(codeword[x+y]==='1')
+					{
+						count+=1
+					}
+				}
+			}
+		}
+		parity[j]=(count%2)
+	}
+	codeword=gencode(message,parity)
+	document.getElementById("encoded").innerHTML=""
+	for(var i in codeword)
+		if(power_2(parseInt(i)+1)==true)
+			document.getElementById("encoded").innerHTML+="<u>"+codeword[i]+"</u>"
+		else
+			document.getElementById("encoded").innerHTML+=codeword[i]
+
+}
+function encode_about(message)
+{
+	var n=message.length
+	var messageLength=message.length
+	for(var k=0;Math.pow(2,k)-1-k<messageLength;k+=1);
+	var parityLength=k
+	var parity=[]
+	for(var i=0;i<parityLength;i+=1)
+		parity[i]=0
+	var codeword=[]
+	var codeLength=n+k
+	codeword=gencode(message,parity)
+	for(var j=0;j<parityLength;j+=1)
+	{
+		var count=0
+		var increment=Math.pow(2,j)
+		codeword=gencode(message,parity)
+		for(var x=Math.pow(2,j)-1;x<messageLength+parityLength;x+=2*increment)
+		{
+			for(var y=0;y<increment;y+=1)
+			{
+				if(x+y<messageLength+parityLength)
+				{
+					if(codeword[x+y]==='1')
+					{
+						count+=1
+					}
+				}
+			}
+		}
+		parity[j]=(count%2)
+	}
+	codeword=gencode(message,parity)
+	for(var i in codeword)
+		if(power_2(parseInt(i)+1)==true)
+			document.getElementById("codeword_correct").innerHTML+="<u>"+codeword[i]+"</u>"
+		else
+			document.getElementById("codeword_correct").innerHTML+=codeword[i]
+
+}
+function decode()
+{
+	var message=document.getElementById("receive").value
+	var messageLength=message.length
+	document.getElementById("originaldata").innerHTML=""
+	if (messageLength!==document.getElementById('encoded').textContent.length)
+		alert("Entered codeword is not of correct length for the entered dataword.")
+	else
+	{
+		if(mismatch(document.getElementById('encoded').textContent,message)==1)
+		{
+			var parityLength=document.getElementById("receive").value.length-document.getElementById('message').value.length
+			var parity=[]
+			var parityCheck=[]
+			var i
+			for(i=0;i<parityLength;i+=1)
+				parity[i]=0
+			for(var j=0;j<parityLength;j+=1)
+			{
+				var count=0
+				var increment=Math.pow(2,j)
+				for(var x=Math.pow(2,j)-1;x<messageLength;x+=2*increment)
+				{
+					for(var y=0;y<increment;y+=1)
+					{
+						if(x+y<messageLength+parityLength)
+						{
+							if(message[x+y]==='1')
+							{
+								count+=1
+							}
+						}
+					}
+				}
+				parity[j]=(count%2)
+			}
+			var indexToCorrect=0
+			for(i=0;i<parity.length;i+=1)
+			{
+				if(parity[i]%2==0)
+					parityCheck.push(true)
+				else
+					parityCheck.push(false)
+			}
+			for(i=0;i<parity.length;i+=1)
+			{
+				if(parityCheck[i]==false)
+				{
+					indexToCorrect+=Math.pow(2,i)
+				}
+			}
+			document.getElementById("error").innerHTML=("Error detected at index "+indexToCorrect.toString())
+		}
+		else if(mismatch(document.getElementById('encoded').textContent,message)==0)
+		{
+			document.getElementById("error").innerHTML="No errors to detect"
+		}
+		else
+		{
+			var ne=mismatch(document.getElementById('encoded').textContent,message).toString();
+			document.getElementById("error").innerHTML=("Errors detected, position cannot be calculated as"+" hamming codes cannot correctly detect "+ne+" errors")
+		}
+	}
+
+}
+function correct()
+{
+
+	var error=document.getElementById("receive").value
+	document.getElementById("originaldata").innerHTML=""
+	if (error.length!==document.getElementById('encoded').textContent.length)
+		alert("Entered codeword is not of correct length for the entered dataword.")
+	else
+	{
+		if(mismatch(document.getElementById('encoded').textContent,error)==1)
+		{
+			var posString=document.getElementById("error").innerHTML
+			var pos=posString.replace( /^\D+/g, '');
+			pos-=1
+			var data=[]
+			for(var i=0;i<error.length;i+=1)
+			{
+				if(i==pos)
+				{
+					if(error[pos]=='0')
+						data.push('1')
+					else
+						data.push('0')				
+				}
+				else
+				{
+					data.push(error[i])
+				}
+			}
+			document.getElementById("receive").value=""
+			for(i in data)
+				document.getElementById("receive").value+=data[i]
+			correc=1
+		}
+		else if(mismatch(document.getElementById('encoded').textContent,error)==0)
+		{
+			alert("There are no errors to correct")
+		}
+		else
+		{
+			var ne=mismatch(document.getElementById('encoded').textContent,error).toString();
+			alert("Hamming codes cannot correct "+ne+" errors")
+		}
+	}
+}
+function extract()
+{
+	var message=document.getElementById("receive").value
+	if(mismatch(document.getElementById('encoded').textContent,error).toString()<=1 && correc!=1)
+		alert("Extracted data has errors, make sure to correct it!")
+	var i
+	var data=[]
+	for(i=0;i<message.length;i+=1)
+	{
+		if(power_2(i+1)==false)
+			data.push(message[i])
+	}
+	document.getElementById("originaldata").innerHTML="Dataword is "
+	for(i in data)
+		document.getElementById("originaldata").innerHTML+=data[i]
+}
+function getindex(d)
+{
+	var message=document.getElementById("dc").textContent.split(': ')[1]
+	var messageLength=message.length
+
+	for(var k=0;Math.pow(2,k)-1-k<messageLength;k+=1);
+	var parityLength=k
+	var ind=[]
+	var i
+	var j=d
+	var count=0
+	var increment=Math.pow(2,j)
+	for(var x=Math.pow(2,j)-1;x<messageLength;x+=2*increment)
+	{
+		for(var y=0;y<increment;y+=1)
+		{
+			if(x+y<messageLength)
+			{
+				ind.push(x+y)
+			}
+		}
+	}
+	return ind
+}
+function getcalc(d)
+{
+	document.getElementById(d).innerHTML=""
+	var indexes=getindex(parseInt(d.split('b')[1])) 
+	for (var i in indexes)
+		if(i==(indexes.length-1))
+			document.getElementById(d).innerHTML+=document.getElementById("dc").textContent.split(':')[1][indexes[i]+1]
+		else
+			document.getElementById(d).innerHTML+=document.getElementById("dc").textContent.split(':')[1][indexes[i]+1]+'+'
+	document.getElementById(d).innerHTML+='='+document.getElementById("codeword").textContent.split(':')[1][Math.pow(2,parseInt(d.split('b')[1]))]
+}
+function getcalct(d)
+{
+	document.getElementById(d).innerHTML=""
+	var indexes=getindex(parseInt(d.split('t')[1])) 
+	for (var i in indexes)
+		if(i==(indexes.length-1))
+			document.getElementById(d).innerHTML+=document.getElementById("rec").textContent.split(':')[1][indexes[i]+1]
+		else
+			document.getElementById(d).innerHTML+=document.getElementById("rec").textContent.split(':')[1][indexes[i]+1]+','
+}
+function learnEncode()
+{
+	document.getElementById('about2').style.display='none'
+	document.getElementById('about').setAttribute("style","margin-top:15%;width:70%;margin-left:15%;");document.getElementById("main").setAttribute("style","margin-top:-54%;transition:margin-top 2s ease;")
+	document.getElementById("codeword").innerHTML="Codeword : "
+	document.getElementById("dataword").innerHTML="Dataword Entered: "
+	document.getElementById("dc").innerHTML="Dataword + Parity bits : "
+	document.getElementById("codeword").innerHTML+=document.getElementById("encoded").innerHTML
+	var pb=0;
+	for (var i=1;i<=document.getElementById("encoded").textContent.length;i+=1)
+		if(power_2(i)==false)
+		{
+			document.getElementById("dataword").innerHTML+=document.getElementById("encoded").textContent[i-1]
+			document.getElementById("dc").innerHTML+=document.getElementById("encoded").textContent[i-1]
+		}
+		else
+		{
+			document.getElementById("dc").innerHTML+='<u>'+'0'+'</u>'
+			pb+=1
+		}
+	document.getElementById("info").innerHTML=""
+	for (var i=0;i<pb;i+=1)
+	{
+
+		message="<p>To calculate parity bit "+(Math.pow(2,parseInt(i+1)-1))+", from position "+(Math.pow(2,parseInt(i+1)-1))+" consider "+(Math.pow(2,parseInt(i+1)-1))+" bit(s), skip the next "+(Math.pow(2,parseInt(i+1)-1))+" bit(s) and repeat this process till the end of the data, count the number of 1s and check if the number of 1s is even or odd. If even, the parity is 0, else 1.<br>"+"P"+(Math.pow(2,parseInt(i+1)-1))+" : "+"<span id='pb"+i+"'></span>"+"</p>"
+		document.getElementById("info").innerHTML+=message
+		getcalc("pb"+i)
+	}
+
+}
+
+function learnError()
+{	
+	var error=document.getElementById('receive').value
+	if (error.length!==document.getElementById('encoded').textContent.length)
+		alert("Entered codeword is not of correct length for the entered dataword.")
+	else
+	{
+		if(mismatch(document.getElementById('encoded').textContent,error)==1)
+		{
+			learnEncode();
+			document.getElementById('about').style.display='none'
+			document.getElementById('about2').setAttribute("style","margin-top:15%;width:70%;margin-left:15%;");document.getElementById("main").setAttribute("style","margin-top:-54%;transition:margin-top 2s ease;")
+			document.getElementById("codeword2").innerHTML="Transmitted Codeword : "
+			document.getElementById("codeword2").innerHTML+=document.getElementById("encoded").textContent
+			document.getElementById("rec").innerHTML="Received Codeword : "
+			document.getElementById("rec").innerHTML+=document.getElementById("receive").value		
+			var pb=0;
+			for(pb=0;Math.pow(2,pb)-1<=document.getElementById("rec").textContent.split(":")[1].length;pb+=1);
+			document.getElementById("info2").innerHTML=""
+			for (var i=0;i<pb;i+=1)
+			{
+
+				message="<p>To calculate parity bit "+(Math.pow(2,parseInt(i+1)-1))+", from position "+(Math.pow(2,parseInt(i+1)-1))+" consider "+(Math.pow(2,parseInt(i+1)-1))+" bit(s), skip the next "+(Math.pow(2,parseInt(i+1)-1))+" bit(s) and repeat this process till the end of the data, count the number of 1s and check if the number of 1s is even or odd. If even, the parity is 0, else 1.<br>"+"P"+(Math.pow(2,parseInt(i+1)-1))+" : "+"<span class='scam' id='pbt"+i+"'></span>"+"</p>"
+				document.getElementById("info2").innerHTML+=message
+				getcalct("pbt"+i)
+			}
+			oi=[]
+			for(var i in document.getElementsByClassName('scam'))
+			{
+				var count=0
+				for(var c in document.getElementsByClassName('scam')[i].textContent)
+					if(document.getElementsByClassName('scam')[i].textContent[c]=='1')
+						count+=1
+				if(count%2)
+
+					oi.push(Math.pow(2,i))
+
+			}
+			var sum=0;
+			document.getElementById("info2").innerHTML+="The positions of parity bits which have an odd number of 1s are added to obtain the position of the error. In this case : "
+			for (var i in oi)
+			{
+				if(i==oi.length-1)
+					document.getElementById("info2").innerHTML+=oi[i]
+				else
+					document.getElementById("info2").innerHTML+=oi[i]+'+'
+				sum+=parseInt(oi[i])
+			}
+			if (oi.length!=1)
+				document.getElementById("info2").innerHTML+='='+sum.toString()
+		}
+		else if (mismatch(document.getElementById('encoded').textContent,error)==0)
+			alert("No errors to learn about")
+		else
+		{			
+			learnEncode();
+			document.getElementById('about').style.display='none'
+			document.getElementById('about2').setAttribute("style","margin-top:15%;width:70%;margin-left:15%;");document.getElementById("main").setAttribute("style","margin-top:-54%;transition:margin-top 2s ease;")
+			document.getElementById("codeword2").innerHTML="Transmitted Codeword : "
+			document.getElementById("codeword2").innerHTML+=document.getElementById("encoded").textContent
+			document.getElementById("rec").innerHTML="Received Codeword : "
+			document.getElementById("rec").innerHTML+=document.getElementById("receive").value		
+			var pb=0;
+			for(pb=0;Math.pow(2,pb)-1<=document.getElementById("rec").textContent.split(":")[1].length;pb+=1);
+			document.getElementById("info2").innerHTML=""
+			for (var i=0;i<pb;i+=1)
+			{
+				message="<p>To calculate parity bit "+(Math.pow(2,parseInt(i+1)-1))+", from position "+(Math.pow(2,parseInt(i+1)-1))+" consider "+(Math.pow(2,parseInt(i+1)-1))+" bit(s), skip the next "+(Math.pow(2,parseInt(i+1)-1))+" bit(s) and repeat this process till the end of the data, count the number of 1s and check if the number of 1s is even or odd. If even, the parity is 0, else 1.<br>"+"P"+(Math.pow(2,parseInt(i+1)-1))+" : "+"<span class='scam' id='pbt"+i+"'></span>"+"</p>"
+				document.getElementById("info2").innerHTML+=message
+				getcalct("pbt"+i)
+			}
+			oi=[]
+			for(var i in document.getElementsByClassName('scam'))
+			{
+				var count=0
+				for(var c in document.getElementsByClassName('scam')[i].textContent)
+					if(document.getElementsByClassName('scam')[i].textContent[c]=='1')
+						count+=1
+				if(count%2)
+
+					oi.push(Math.pow(2,i))
+
+			}
+			var sum=0;
+			document.getElementById("info2").innerHTML+="Since more than one parity bit is 1 we can say there exists errors, but the positions cannot be determined as the sum of the odd parity positions give us a misleading value"
+
+		}
+	}
+
+}
+function cv()
+{
+	document.getElementById('about2').style.display='none'
+	document.getElementById('about').style.display='none'
+	document.getElementById('about3').setAttribute("style","margin-top:15%;width:70%;margin-left:15%;");document.getElementById("main").setAttribute("style","margin-top:-54%;transition:margin-top 2s ease;")
+	document.getElementById('codeword3').innerHTML="Entered codeword: "+document.getElementById('receive').value
+	document.getElementById("dword_x").innerHTML="Extracted dataword from entered codeword: "
+	document.getElementById("dword").innerHTML="Entered dataword: "
+	var message=document.getElementById("receive").value
+	var i
+	var data=[]
+	ds=""
+	for(i=0;i<message.length;i+=1)
+	{
+		if(power_2(i+1)==false)
+		{
+			data.push(message[i])
+			ds+=message[i]
+		}
+	}
+	for(i in data)
+		document.getElementById("dword_x").innerHTML+=data[i]
+	
+	message=document.getElementById("message").value
+	document.getElementById("dword").innerHTML+=message
+	document.getElementById("codeword_correct").innerHTML="Codeword calculated for entered dataword : "
+	encode_about(message)
+	document.getElementById("infomat").innerHTML=""
+	if(ds.length===message.length)
+	{
+		document.getElementById("infomat").innerHTML+="Entered codeword is of correct size since a "+ds.length.toString()+" bit dataword will have a codeword of size "+document.getElementById('receive').value.length
+		if(ds===message)
+		{
+			document.getElementById("infomat").innerHTML+=" and is rightly encoded as the codeword entered matches the codeword calculated. <a style='color:white' href='javascript:learnEncode("+message+")' id='le'>Learn about codeword calculation</a> "
+		}
+		else
+		{
+			document.getElementById("infomat").innerHTML+=" but does not match the rightly calculated codeword. <a style='color:white' href='javascript:learnEncode("+message+")' id='le'>Learn about codeword calculation</a> "	
+		}
+	}
+	else
+	{
+		document.getElementById("infomat").innerHTML+="Entered codeword is of incorrect size since a "+message.length+" bit dataword should have a codeword of size "+document.getElementById('encoded').textContent.length+"<br>"
+	}
+}
+</script>
+<style type="text/css">
+			.ole
+			{
+				overflow-y:scroll;
+			}
+			#about,#about2
+			{
+				transition: margin-top 2s ease;
+				margin-top: 100%;
+			}
+			html
+			{
+				background: #34495e;
+				color:white;
+				overflow: hidden;
+				font-family: 'Source Sans Pro';
+			}
+			u
+			{
+				padding-top: 15px;
+			}
+			h1
+			{
+				font-size: 62px;
+				margin-bottom: -0.1%;
+				font-weight: 300;
+			}
+			h2
+			{
+				font-size: 38px;
+				font-weight: 300;
+			}
+			#introinput
+			{
+				float: left;
+				transition:width 2s ease;
+				width: 50%;
+				margin-left: 25%;
+			}
+			#input
+			{
+				float: left;
+				width: 29%;				
+				margin-left: 15%;
+			}
+			#result
+			{
+				float: right;
+				width: 29%;
+				transition: margin-right 2s;
+				visibility: hidden;				
+				margin-right: -10%;
+			}			
+			#received
+			{
+				float: bottom;
+				visibility: hidden;
+				width: 29%;
+				margin-top: 100%;
+			}
+			@keyframes fadeIn 
+			{
+			  0% {
+			    opacity: 0;
+			  }
+			  100% {
+    			visibility: visible;
+			    opacity: 1;
+			  }
+			}			
+			@keyframes fadeOut 
+			{
+			  0% {
+			    opacity: 1;
+			  }
+			  100% {
+    			margin-top: -20%;
+			    opacity: 0;
+			  }
+			}
+			#intro
+			{
+				width:85%;		
+				border-top:solid 1px white;
+			}
+			.box
+			{
+				background: #00d2a3;
+				border-top: solid 10px #16a085;
+				border-top-left-radius: 10px;
+				border-top-right-radius: 10px;
+				padding:0%;
+			}
+			.ibox
+			{
+				background: #00d2a3;
+				border-top: solid 10px #16a085;
+				border-top-left-radius: 10px;
+				border-top-right-radius: 10px;
+				padding:0%;
+				transition: height 2s ease;
+				height: 170%;
+			}
+			#top
+			{
+				height: 40%;
+				float: top;
+				display: block;
+			}
+			#bottom
+			{
+				height: 40%;
+				float: bottom;
+				display: block;
+			}
+			#receive,#encoded,#data
+			{
+				font-size: 30px;
+				font-weight: 300;
+			}
+			span
+			{
+				font-size: 20px;
+				font-weight: 300;
+			}
+			#message
+			{
+				display: inline-block;
+			  	padding: 10px;
+			  	font-size: 20px;
+				width: 250px;
+				color: white;
+				font-weight: 300;
+				box-sizing: border-box;
+				background-color: rgba(0,0,0,0);	
+   				border: 2px solid white;
+				border-radius: 10px;
+				margin: 10px auto;
+				transition:background-color 1s ease;
+			}
+			input[type=text]
+			{
+				display: inline-block;
+			  	padding: 10px;
+			  	font-size: 20px;
+				width: 250px;
+				color: white;
+				font-weight: 300;
+				box-sizing: border-box;
+				background-color: rgba(0,0,0,0);
+				border-radius: 10px;
+				margin: 10px auto;
+				transition:background-color 1s ease;				
+			}
+			button
+			{
+			  	padding: 5px;
+			  	font-size: 15px;
+				font-weight: 300;
+				width: 150px;
+				color: white;
+				box-sizing: border-box;
+				background-color: rgba(0,0,0,0);	
+   				border: 2px solid white;
+				border-radius: 10px;
+				margin: 4%;
+				transition:background-color 1s ease;
+			}
+			input[type=text]:focus,button:hover
+			{
+				background-color: rgba(255,255,255,0.5);
+			}
+		</style>
+	</head>
+	<body>
+		<h1> 
+			<center>
+				Hamming Codes 
+			</center>
+		</h1>
+		<div id="main">
+			<div id="top">
+				<div id="introinput">
+					<div class="ibox">
+						<center>
+							<h2>
+								Enter Dataword
+							</h2>	
+							<input id="message" type="text" placeholder="Input binary number"/>
+							<br/>
+							<button id="encode" onclick="encode(document.getElementById('message').value,0);">
+								Encode Data
+							</button>
+							<div id="intro">
+								<h2>
+									About
+								</h2>
+								<p style="font-size: 20px">
+									Hamming codes are part of linear error correcting codes and can detect up to two bit errors and correct up to one bit error. They are a class of binary linear codes. The parity bits are always positioned at the bit positions of powers of 2 (such as p1,p2,p4,p8).  The data is put in between the parity bits
+								</p>
+								<p>
+									<br/>								
+								</p>
+							</div>
+						</center>
+					</div>
+				</div>
+				<div id="result">
+					<div class="box">
+						<center>
+							<h2>
+								Codeword formed
+							</h2>
+							<span id="encoded"></span>
+							<br/>
+							<br/>
+							<button id="learn" onclick="learnEncode(document.getElementById('encoded'));">
+								Learn More
+							</button>
+						</center>
+					</div>
+				</div>
+
+			</div>
+			<div id="bottom">
+				<center>
+					<div id="received">
+						<div class="box">
+							<center>
+								<h2>
+									Enter Codeword
+								</h2>
+								<input class="message" id="receive" placeholder="Input binary number"/>
+								<br/>							
+								<span id="error"></span>
+								<br/>
+								<span style="word-wrap: break-word;" id="originaldata"></span>
+								<br/>
+								<button id="learn" onclick="learnError();">
+									Learn More
+								</button>
+								<button id="correct" onclick="decode();">
+									Detect Error
+								</button>
+								<button id="correct" onclick="correct();">
+									Correct Error
+								</button>						
+								<button id="correct" onclick="extract();">
+									Extract Data
+								</button>					
+								<button id="learn" onclick="cv();">
+									Check Validity
+								</button>
+							</center>
+						</div>
+					</div>
+				</center>
+			</div>
+		</div>
+		<div id="about">
+			<div class="box">
+				<center>
+					<h2>
+						More about Encoding
+					</h2>
+					<span style="font-weight: 500" id="dataword">Dataword entered : </span>	
+					<br>
+					<span style="font-weight: 500" id="dc">Dataword + Parity bits : </span>	
+					<br>
+					<span style="font-weight: 500" id="codeword">Codeword : </span>	
+					<br>
+				</center>
+				<center>
+					<h2 style="border-top: solid 1px white;width: 70%;">
+						Parity Calculation
+					</h2>
+					<span style="margin-top:-30px; font-weight: 500">
+						Parity bits are calculated for Dataword + Parity bits
+					</span>
+				</center>
+				<p id="info" class='ole' style="font-size:20px;background:#16a085;margin-left: 30px;margin-right: 30px;height: 20%; padding-left: 5%;padding-right: 5%;">
+				</p>
+				<span style="font-size:20px;margin-left: 30px;margin-right: 30px;margin-bottom:-2%;font-weight: 500;">
+					The calculated parity bits are then combined with the dataword to form the codeword
+				</span>
+				<br/>
+				<center>
+					<button id="closebtn" onclick='document.getElementById("about").setAttribute("style","margin-top:10%;width:70%;margin-left:15%;");document.getElementById("main").setAttribute("style","margin-top:1%;transition:margin-top 2s ease;")'>
+						Close
+					</button>
+				</center>
+			</div>
+		</div>
+		<div id="about2">
+			<div class="box">
+				<center>
+					<h2>
+						More about Error Correction/Detection
+					</h2>
+					<span style="font-weight: 500" id="codeword2">Transmitted Codeword : </span>	
+					<br>
+					<span style="font-weight: 500" id="rec">Received Codeword : </span>	
+					<br>
+				</center>
+				<center>
+					<h2 style="border-top: solid 1px white;width: 70%;">
+						Error Position Calculation
+					</h2>
+					<span style="margin-top:-30px; font-weight: 500">
+						Parity bits are calculated for the Received Codeword
+					</span>
+				</center>
+				<br/>				
+				<p id="info2" class='ole' style="font-size:20px;background:#16a085;margin-left: 30px;margin-right: 30px;height: 20%; padding-left: 5%;padding-right: 5%;">
+				</p>
+				<p style="font-size:20px;margin-left: 30px;margin-right: 30px;margin-bottom:-2%;">
+					After the error position is detected, the bit at that position is inverted to correct the error. The dataword can then be extracted by ignoring the bits at the parity positions.
+				</p>
+				<center>
+					<button id="closebtn" onclick='document.getElementById("about2").setAttribute("style","margin-top:10%;width:70%;margin-left:15%;");document.getElementById("main").setAttribute("style","margin-top:1%;transition:margin-top 2s ease;")'>
+						Close
+					</button>
+				</center>
+			</div>
+		</div>
+
+		<div id="about3">
+			<div class="box">
+				<center>
+					<h2>
+						Codeword Validity
+					</h2>
+					<span style="font-weight: 500" id="codeword3">Codeword entered : </span>	
+					<br>
+					<span style="font-weight: 500" id="dword">Dataword entered : </span>	
+					<br>
+					<span style="font-weight: 500" id="dword_x">Dataword extracted : </span>	
+					<br>
+					<span style="font-weight: 500" id="codeword_correct">Codeword calculated : </span>	
+				</center>
+				<center>
+					<h2 style="border-top: solid 1px white;width: 70%;">
+						Validity Check
+					</h2>
+				<span id="infomat" style="padding:50px;font-size:20px;margin-left: 30px;margin-right: 30px;margin-bottom:-2%;font-weight: 500;">
+					
+				</span>
+				</center>
+				<br/>
+				<center>
+					<button id="closebtn" onclick='document.getElementById("about3").setAttribute("style","margin-top:10%;width:70%;margin-left:15%;");document.getElementById("main").setAttribute("style","margin-top:1%;transition:margin-top 2s ease;")'>
+						Close
+					</button>
+				</center>
+			</div>
+		</div>
+		<div id="infobox">
+			By<br>
+			Mohit Bhasi 16CO126<br>
+			Rishika Narayanan 16CO241
+		</div>
+	</body>
+</html>
