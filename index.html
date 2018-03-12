@@ -490,177 +490,216 @@ function cv()
 }
 </script>
 <style type="text/css">
-			.ole
-			{
-				overflow-y:scroll;
-			}
-			#about,#about2
-			{
-				transition: margin-top 2s ease;
-				margin-top: 100%;
-			}
-			html
-			{
-				background: #34495e;
-				color:white;
-				overflow: hidden;
-				font-family: 'Source Sans Pro';
-			}
-			u
-			{
-				padding-top: 15px;
-			}
-			h1
-			{
-				font-size: 62px;
-				margin-bottom: -0.1%;
-				font-weight: 300;
-			}
-			h2
-			{
-				font-size: 38px;
-				font-weight: 300;
-			}
-			#introinput
-			{
-				float: left;
-				transition:width 2s ease;
-				width: 50%;
-				margin-left: 25%;
-			}
-			#input
-			{
-				float: left;
-				width: 29%;				
-				margin-left: 15%;
-			}
-			#result
-			{
-				float: right;
-				width: 29%;
-				transition: margin-right 2s;
-				visibility: hidden;				
-				margin-right: -10%;
-			}			
-			#received
-			{
-				float: bottom;
-				visibility: hidden;
-				width: 29%;
-				margin-top: 100%;
-			}
-			@keyframes fadeIn 
-			{
-			  0% {
-			    opacity: 0;
-			  }
-			  100% {
-    			visibility: visible;
-			    opacity: 1;
-			  }
-			}			
-			@keyframes fadeOut 
-			{
-			  0% {
-			    opacity: 1;
-			  }
-			  100% {
-    			margin-top: -20%;
-			    opacity: 0;
-			  }
-			}
-			#intro
-			{
-				width:85%;		
-				border-top:solid 1px white;
-			}
-			.box
-			{
-				background: #00d2a3;
-				border-top: solid 10px #16a085;
-				border-top-left-radius: 10px;
-				border-top-right-radius: 10px;
-				padding:0%;
-			}
-			.ibox
-			{
-				background: #00d2a3;
-				border-top: solid 10px #16a085;
-				border-top-left-radius: 10px;
-				border-top-right-radius: 10px;
-				padding:0%;
-				transition: height 2s ease;
-				height: 170%;
-			}
-			#top
-			{
-				height: 40%;
-				float: top;
-				display: block;
-			}
-			#bottom
-			{
-				height: 40%;
-				float: bottom;
-				display: block;
-			}
-			#receive,#encoded,#data
-			{
-				font-size: 30px;
-				font-weight: 300;
-			}
-			span
-			{
-				font-size: 20px;
-				font-weight: 300;
-			}
-			#message
-			{
-				display: inline-block;
-			  	padding: 10px;
-			  	font-size: 20px;
-				width: 250px;
-				color: white;
-				font-weight: 300;
-				box-sizing: border-box;
-				background-color: rgba(0,0,0,0);	
-   				border: 2px solid white;
-				border-radius: 10px;
-				margin: 10px auto;
-				transition:background-color 1s ease;
-			}
-			input[type=text]
-			{
-				display: inline-block;
-			  	padding: 10px;
-			  	font-size: 20px;
-				width: 250px;
-				color: white;
-				font-weight: 300;
-				box-sizing: border-box;
-				background-color: rgba(0,0,0,0);
-				border-radius: 10px;
-				margin: 10px auto;
-				transition:background-color 1s ease;				
-			}
-			button
-			{
-			  	padding: 5px;
-			  	font-size: 15px;
-				font-weight: 300;
-				width: 150px;
-				color: white;
-				box-sizing: border-box;
-				background-color: rgba(0,0,0,0);	
-   				border: 2px solid white;
-				border-radius: 10px;
-				margin: 4%;
-				transition:background-color 1s ease;
-			}
-			input[type=text]:focus,button:hover
-			{
-				background-color: rgba(255,255,255,0.5);
-			}
+#infobox
+{
+	position: fixed;
+	bottom: 0;
+	right:0;
+	padding: 10px;
+	margin:10px;	
+	border-left:solid 1px white;
+}
+.ole
+{
+	overflow-y:scroll;
+}
+#about,#about2,#about3
+{
+	transition: margin-top 2s ease;
+	margin-top: 100%;
+}
+html
+{
+	background: #34495e;
+	color:white;
+	overflow: hidden;
+	font-family: 'Source Sans Pro';
+}
+u
+{
+	padding-top: 15px;
+}
+h1
+{
+	font-size: 62px;
+	margin-bottom: -0.1%;
+	font-weight: 300;
+}
+h2
+{
+	font-size: 38px;
+	font-weight: 300;
+}
+#introinput
+{
+	float: left;
+	transition:width 2s ease;
+	width: 50%;
+	margin-left: 25%;
+}
+#input
+{
+	float: left;
+	width: 29%;				
+	margin-left: 15%;
+}
+#result
+{
+	float: right;
+	width: 29%;
+	transition: margin-right 2s;
+	visibility: hidden;				
+	margin-right: -10%;
+}			
+#received
+{
+	float: bottom;
+	visibility: hidden;
+	width: 29%;
+	margin-top: 100%;
+}
+@keyframes fadeIn 
+{
+  0% {
+    opacity: 0;
+  }
+  100% {
+	visibility: visible;
+    opacity: 1;
+  }
+}			
+@keyframes fadeOut 
+{
+  0% {
+    opacity: 1;
+  }
+  100% {
+	margin-top: -20%;
+    opacity: 0;
+  }
+}
+#intro
+{
+	width:85%;		
+	border-top:solid 1px white;
+}
+.box
+{
+	background: #00d2a3;
+	border-top: solid 10px #16a085;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	padding:0%;
+}
+.ibox
+{
+	background: #00d2a3;
+	border-top: solid 10px #16a085;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	padding:0%;
+	transition: height 2s ease;
+	height: 170%;
+}
+#top
+{
+	height: 40%;
+	float: top;
+	display: block;
+}
+#bottom
+{
+	height: 40%;
+	float: bottom;
+	display: block;
+}
+#encoded,#data
+{
+	font-size: 30px;
+	font-weight: 300;
+}
+span
+{
+	font-size: 20px;
+	font-weight: 300;
+}
+#message
+{
+	display: inline-block;
+  	padding: 10px;
+  	font-size: 20px;
+	width: 250px;
+	color: white;
+	font-weight: 300;
+	box-sizing: border-box;
+	background-color: rgba(0,0,0,0);	
+		border: 2px solid white;
+	border-radius: 10px;
+	margin: 10px auto;
+	transition:background-color 1s ease;
+}
+.message
+{
+	display: inline-block;
+  	padding: 10px;
+  	font-size: 20px;
+	width: 250px;
+	color: white;
+	font-weight: 300;
+	box-sizing: border-box;
+	background-color: rgba(0,0,0,0);	
+		border: 2px solid white;
+	border-radius: 10px;
+	margin: 10px auto;
+	transition:background-color 1s ease;
+}
+
+input[type=text]
+{
+	display: inline-block;
+  	padding: 10px;
+  	font-size: 20px;
+	width: 250px;
+	color: white;
+	font-weight: 300;
+	box-sizing: border-box;
+	background-color: rgba(0,0,0,0);
+	border-radius: 10px;
+	margin: 10px auto;
+	transition:background-color 1s ease;				
+}
+button
+{
+  	padding: 5px;
+  	font-size: 15px;
+	font-weight: 300;
+	width: 150px;
+	color: white;
+	box-sizing: border-box;
+	background-color: rgba(0,0,0,0);	
+		border: 2px solid white;
+	border-radius: 10px;
+	margin: 4%;
+	transition:background-color 1s ease;
+}
+#bottom button
+{
+  	padding: 5px;
+  	font-size: 15px;
+	font-weight: 300;
+	width: 150px;
+	color: white;
+	box-sizing: border-box;
+	background-color: rgba(0,0,0,0);	
+		border: 2px solid white;
+	border-radius: 10px;
+	margin: 1%;
+	transition:background-color 1s ease;
+}
+input[type=text]:focus,button:hover,#bottom button:hover
+{
+	background-color: rgba(255,255,255,0.5);
+}
 		</style>
 	</head>
 	<body>
